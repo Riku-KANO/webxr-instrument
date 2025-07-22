@@ -11,7 +11,7 @@ function App(): React.JSX.Element {
   return (
     <>
       <Instructions />
-      <button 
+      <button
         onClick={() => store.enterVR()}
         style={{
           position: 'fixed',
@@ -26,7 +26,7 @@ function App(): React.JSX.Element {
           cursor: 'pointer',
           zIndex: 1000,
           fontSize: '16px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
         }}
       >
         ENTER VR

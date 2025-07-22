@@ -15,12 +15,16 @@ function VRInstrument(): React.JSX.Element {
   const isPresenting = xrState.session !== undefined && xrState.session !== null
   const [synth, setSynth] = useState<Tone.Synth | null>(null)
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
-  const [rightHandPos, setRightHandPos] = useState<Position>({ x: 0, y: 1.5, z: -1 })
+  const [rightHandPos, setRightHandPos] = useState<Position>({
+    x: 0,
+    y: 1.5,
+    z: -1,
+  })
 
   useEffect(() => {
     const synthInstance = new Tone.Synth().toDestination()
     setSynth(synthInstance)
-    
+
     return () => {
       synthInstance.dispose()
     }
@@ -41,7 +45,7 @@ function VRInstrument(): React.JSX.Element {
     }
   }
 
-  useFrame((state: any) => {
+  useFrame(state => {
     if (!isPresenting || !synth) return
 
     try {
@@ -49,13 +53,13 @@ function VRInstrument(): React.JSX.Element {
       if (rightController && rightController.position) {
         const pos = rightController.position
         setRightHandPos({ x: pos.x, y: pos.y, z: pos.z })
-        
+
         if (isPlaying) {
-          const freq = Math.max(100, Math.min(800, 200 + (pos.y * 300)))
+          const freq = Math.max(100, Math.min(800, 200 + pos.y * 300))
           synth.frequency.value = freq
         }
       }
-    } catch (error) {
+    } catch {
       // WebXR APIエラーを無視
     }
   })
@@ -64,7 +68,7 @@ function VRInstrument(): React.JSX.Element {
     return (
       <group position={[0, 0, -2]}>
         <Box args={[2, 1, 0.1]} onClick={togglePlay}>
-          <meshStandardMaterial color={isPlaying ? "red" : "green"} />
+          <meshStandardMaterial color={isPlaying ? 'red' : 'green'} />
         </Box>
         <mesh position={[0, 0, 0.1]}>
           <planeGeometry args={[1.8, 0.8]} />
@@ -76,18 +80,21 @@ function VRInstrument(): React.JSX.Element {
 
   return (
     <group>
-      <Sphere args={[0.05]} position={[rightHandPos.x, rightHandPos.y, rightHandPos.z]}>
-        <meshStandardMaterial 
-          color={isPlaying ? "red" : "green"} 
-          emissive={isPlaying ? "red" : "green"} 
-          emissiveIntensity={0.3} 
+      <Sphere
+        args={[0.05]}
+        position={[rightHandPos.x, rightHandPos.y, rightHandPos.z]}
+      >
+        <meshStandardMaterial
+          color={isPlaying ? 'red' : 'green'}
+          emissive={isPlaying ? 'red' : 'green'}
+          emissiveIntensity={0.3}
         />
       </Sphere>
-      
+
       <Box args={[0.3, 0.1, 0.1]} position={[0, 1.5, -1]} onClick={togglePlay}>
-        <meshStandardMaterial color={isPlaying ? "red" : "blue"} />
+        <meshStandardMaterial color={isPlaying ? 'red' : 'blue'} />
       </Box>
-      
+
       <group position={[0, 1, -0.5]}>
         {[...Array(8)].map((_, i) => (
           <Box
@@ -95,11 +102,12 @@ function VRInstrument(): React.JSX.Element {
             args={[0.08, 0.3, 0.08]}
             position={[(i - 3.5) * 0.12, 0, 0]}
           >
-            <meshStandardMaterial 
-              color={isPlaying ? 
-                `hsl(${(rightHandPos.y + 1) * 180}, 70%, 50%)` : 
-                'gray'
-              } 
+            <meshStandardMaterial
+              color={
+                isPlaying
+                  ? `hsl(${(rightHandPos.y + 1) * 180}, 70%, 50%)`
+                  : 'gray'
+              }
             />
           </Box>
         ))}
